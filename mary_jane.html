@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mary Jane — recovered desktop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#24211e; --panel:#11100f; --panel2:#171513; --border:#39332e;
+  --text:#c9c4ba; --dim:#777067; --muted:#55504a; --accent:#8a3030;
+  --accent2:#b74a4a; --paper:#b9ad96; --green:#78806d;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:#171513;color:var(--text);font-family:'Space Mono',monospace;overflow:hidden}
+#desktop {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+
+    background-image: url("mary_jane_desktop_wp.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#desktop::before{
+ content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+ background:
+   radial-gradient(circle,rgba(235,225,205,.09) 0 1px,transparent 1.5px) 0 0/22px 22px,
+   repeating-linear-gradient(90deg,rgba(255,255,255,.025) 0 1px,transparent 1px 44px),
+   repeating-linear-gradient(0deg,rgba(0,0,0,.025) 0 1px,transparent 1px 44px);
+}
+#desktop::after{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ box-shadow:inset 0 0 150px 45px rgba(0,0,0,.68);
+}
+
+.scanlines{position:absolute;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(to bottom,transparent 0 1px,rgba(0,0,0,.14) 2px,transparent 3px);animation:flicker 7s infinite}
+@keyframes flicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.8}94%{opacity:1}}
+
+@keyframes rgbsplit{0%{filter:none}30%{filter:drop-shadow(2px 0 #7a1414) drop-shadow(-2px 0 #244a44)}60%{filter:drop-shadow(-3px 0 #7a1414) drop-shadow(3px 0 #244a44)}100%{filter:none}}
+
+#icons{position:absolute;top:26px;left:22px;z-index:5;display:flex;flex-direction:column;gap:22px}
+.icon{width:104px;text-align:center;cursor:pointer;user-select:none}
+.icon .glyph{width:54px;height:46px;margin:0 auto 6px;background:#292724cc;border:1px solid #5b554c;display:flex;align-items:center;justify-content:center;font-family:'VT323';font-size:27px;color:#d0c6b2;position:relative;box-shadow:0 3px 8px #0005}
+.icon .glyph::after{content:"";position:absolute;top:-7px;right:6px;width:14px;height:7px;background:#292724;border:1px solid #5b554c;border-bottom:none}
+.icon.locked .glyph{color:var(--accent2);border-color:#7b3030}
+.icon .badge{position:absolute;top:-6px;right:8px;background:#a95a5a;color:#fff;font-family:'VT323';font-size:13px;width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center;box-shadow:0 0 8px #0009}
+.icon.has-unread .glyph{border-color:#c0a789;animation:pulseAlert 1.6s ease-in-out infinite}
+@keyframes pulseAlert{0%,100%{box-shadow:0 3px 8px #0005}50%{box-shadow:0 0 16px #a95a5a99}}
+.icon span.label{display:block;font-family:'VT323';font-size:15px;color:#ddd5c6;line-height:1.15;text-shadow:0 1px 5px #000;}
+.icon:hover .glyph{border-color:#d3c6ac;background:#36312b}
+.icon:hover span.label{color:#fff}
+
+#taskbar{position:absolute;left:0;right:0;bottom:0;height:35px;z-index:60;background:#171513dd;border-top:1px solid #514a41;display:flex;align-items:center;padding:0 10px;gap:10px;font-family:'VT323';font-size:16px;color:#aaa194}
+#taskbar .start{border:1px solid #514a41;padding:2px 10px;color:#c2b7a5}
+#clock{margin-left:auto;color:#aaa194;letter-spacing:1px}
+
+.win{position:absolute;z-index:20;width:min(600px,90vw);max-height:78vh;background:var(--panel);border:1px solid var(--border);box-shadow:0 18px 50px #000b,0 0 0 1px #000;display:none;flex-direction:column;animation:winopen .18s ease-out}
+.win.open{display:flex}
+@keyframes winopen{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.win .titlebar{background:#171513;border-bottom:1px solid #342f2a;padding:7px 10px;display:flex;align-items:center;justify-content:space-between;font-family:'VT323';font-size:16px;color:#c0b6a7;letter-spacing:.5px}
+.win .titlebar .x{cursor:pointer;color:#9a9186;border:1px solid #514a41;width:20px;height:18px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.win .titlebar .x:hover{background:var(--accent);color:#fff}
+.win .body{padding:16px 18px;overflow-y:auto;font-size:14px;line-height:1.65;color:#c1bbb0}
+.win .body::-webkit-scrollbar{width:8px} .win .body::-webkit-scrollbar-thumb{background:#39342f}
+
+#win-browser{top:8%;left:22%} #win-chat{top:11%;left:10%} #win-files{top:9%;left:27%}
+#win-diary{top:12%;left:7%} #win-bin{top:17%;left:29%} #win-checklist{top:14%;left:33%}
+
+.memo-header{font-family:'VT323';font-size:15px;color:#8e8579;border-bottom:1px solid #342f2a;padding-bottom:10px;margin-bottom:14px;letter-spacing:.5px}
+
+.browser-chrome{background:#1d1a18;border-bottom:1px solid #342f2a;padding:8px 10px;display:flex;align-items:center;gap:8px}
+.navdot{width:9px;height:9px;border-radius:50%;background:#514a41}
+.addr{flex:1;background:#100f0e;border:1px solid #3b352f;color:#8e8579;font-size:12px;padding:5px 9px}
+.hist-label,.section-label{font-family:'VT323';font-size:15px;color:#8e8579;margin:2px 0 10px;letter-spacing:.6px}
+.hist-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #282421;font-size:13.5px}
+.hist-row .q{flex:1} .hist-row .t{color:#625b53;font-size:11px;white-space:nowrap}
+.hist-row.flag .q{color:#c05a5a}
+
+.contact{border:1px solid #332d28;background:#151311;padding:10px;margin-bottom:14px}
+.contact strong{color:#d4cab9} .contact small{display:block;color:#70685f;margin-top:3px}
+
+#chat-list{display:flex;flex-direction:column}
+.contact-row{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid #282421;cursor:pointer}
+.contact-row:hover{background:#1b1815}
+.contact-row .avatar{width:38px;height:38px;flex-shrink:0;border-radius:50%;background:#241f1b;border:1px solid #4a423a;display:flex;align-items:center;justify-content:center;font-family:'VT323';font-size:17px;color:#c0b6a7}
+.contact-meta{flex:1;min-width:0;display:flex;flex-direction:column}
+.contact-meta strong{color:#d4cab9;font-size:13.5px}
+.contact-meta .preview{color:#726a60;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.row-badge{display:none;background:#a95a5a;color:#fff;font-family:'VT323';font-size:13px;width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center;flex-shrink:0}
+.thread{display:none}
+.thread-header{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #282421}
+.thread-header .back{font-family:'VT323';font-size:15px;color:#8e8579;cursor:pointer}
+.thread-header .back:hover{color:#d3c6ac}
+.thread-header strong{color:#d4cab9;font-size:14px}
+.thread-header small{color:#70685f}
+.msg-row{display:flex;margin-bottom:10px} .msg-row.me{justify-content:flex-end}
+.bubble{max-width:80%;padding:8px 11px;border:1px solid #302b27;background:#171513;font-size:13px;line-height:1.5}
+.msg-row.me .bubble{background:#1b1515;border-color:#4a2828}
+.sender{display:block;font-family:'VT323';font-size:13px;color:#82786d;margin-bottom:2px}
+.timestamp{display:block;font-size:10px;color:#5a534c;margin-top:4px}
+.chat-date{font-family:'VT323';font-size:16px;color:#9a8d7e;border-top:1px dashed #302b27;margin:16px 0 10px;padding-top:10px}
+.seen-none{color:#713333;font-size:11px;margin-top:14px;font-family:'VT323';letter-spacing:1px}
+
+.entry{margin-bottom:22px;padding-bottom:16px;border-bottom:1px dashed #302b27}
+.entry:last-child{border-bottom:none} .entry .date{font-family:'VT323';font-size:17px;color:#a05a5a;margin-bottom:6px;letter-spacing:1px}
+.entry p{margin:0 0 8px} .whisper{opacity:.55;font-style:italic}
+.diary-lock{text-align:center;padding:22px 10px;border:1px dashed #4a2828;background:#15100f}
+.diary-lock input{background:#0d0c0b;border:1px solid #4b4037;color:#ddd3c4;padding:8px;width:min(260px,80%);font-family:'Space Mono';margin:10px 4px}
+.btn{background:#241b18;border:1px solid #654039;color:#cdbfb0;padding:7px 10px;font-family:'VT323';font-size:15px;cursor:pointer}
+.btn:hover{background:#39221e}
+.hint{font-size:11px;color:#6f665d;margin-top:9px}
+
+.folder-meta{font-family:'VT323';font-size:14px;color:#766d63;margin-bottom:12px}
+.file-row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #282421;padding:8px 0;font-size:12.5px}
+.file-row .date{color:#746b61;white-space:nowrap} .file-row.flag .name{color:#bd5555}
+.gallery{display:flex;flex-direction:column;gap:15px;margin-top:12px}
+.shot{border:1px solid #302b27;background:#080807}
+.shot img{width:100%;display:block;filter:grayscale(.2) contrast(1.08) brightness(.9)}
+.shot .cap{font-family:'VT323';font-size:14px;color:#777067;padding:6px 10px;border-top:1px solid #282421;display:flex;justify-content:space-between;gap:10px}
+.shot .cap .fname{color:#a05a5a}
+.photo-note{font-size:11px;color:#6e665e;margin-top:5px}
+
+
+.recycle-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 120px);
+    gap: 30px;
+    padding: 25px;
+}
+
+.recycle-file {
+    width: 120px;
+    text-align: center;
+}
+
+.recycle-file img {
+    width: 100px;
+    height: 80px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 8px;
+}
+
+.recycle-file span {
+    display: block;
+    font-family:'VT323';font-size:15px
+    word-break: break-word;
+}
+
+.recovered{color:#9f6a55}
+.locked-msg{font-family:'VT323';font-size:20px;color:var(--accent2);text-align:center;padding:25px 10px}
+.case-note{border-left:2px solid #714040;padding-left:12px;margin:12px 0;color:#aaa095}
+.clue{color:#c0a789}
+.warning{color:#a95a5a;font-family:'VT323';letter-spacing:.5px}
+.images {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.images img {
+    width: 120px;
+    height: 100px;
+    object-fit: cover;
+}
+/* PHOTO VIEWER */
+
+.photo-viewer{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:100%;
+}
+
+.photo-frame{
+  width:min(500px,100%);
+  height:min(430px,58vh);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#080807;
+  border:1px solid #39332e;
+  box-shadow:inset 0 0 30px #000;
+  overflow:hidden;
+}
+
+.photo-frame img{
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  display:block;
+  cursor:pointer;
+  filter:grayscale(.15) contrast(1.05) brightness(.92);
+}
+
+.photo-info{
+  width:min(500px,100%);
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:8px 10px;
+  background:#0b0a09;
+  border:1px solid #302b27;
+  border-top:none;
+  font-family:'VT323';
+  font-size:16px;
+  color:#a05a5a;
+}
+
+.photo-info span:last-child{
+  color:#777067;
+}
+
+.photo-controls{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin-top:14px;
+}
+
+.viewer-btn{
+  background:#241b18;
+  border:1px solid #514039;
+  color:#cdbfb0;
+  padding:7px 14px;
+  font-family:'VT323';
+  font-size:16px;
+  cursor:pointer;
+}
+
+.viewer-btn:hover{
+  background:#39221e;
+  border-color:#8a3030;
+  color:#fff;
+}
+
+#boot{position:fixed;inset:0;background:#000;color:#918b82;z-index:200;font-family:'VT323';font-size:16px;padding:24px;white-space:pre-wrap;line-height:1.5}
+#boot.hide{display:none} .cursor-blink{animation:blink 1s steps(1) infinite} @keyframes blink{50%{opacity:0}}
+@media(max-width:640px){#icons{top:14px;left:10px;gap:17px}.icon{width:80px}.icon span.label{font-size:13px}.win{width:92vw;left:4vw!important}}
+</style>
+</head>
+<body>
+<div id="boot">SYSTEM BOOT...
+CHECKING DISK C:...
+RECOVERY MODE: ENABLED
+LAST KNOWN ACTIVE DATE: 18 APR 2024
+LOADING USER PROFILE: MARY JANE
+<span id="boot-line2"></span><span class="cursor-blink">_</span></div>
+
+<div id="desktop">
+  <div id="taskbar">
+  <div class="start">START</div>
+  <div id="clock"></div>
+</div>
+<div class="scanlines"></div>
+
+<div id="icons">
+  <div class="icon" onclick="openWin('files')"><div class="glyph">f</div><span class="label">Images</span></div>
+  <div class="icon" onclick="openWin('browser')"><div class="glyph">w</div><span class="label">WebFind</span></div>
+  <div class="icon" id="icon-chat" onclick="openWin('chat')"><div class="glyph">m<span class="badge" id="chat-badge">1</span></div><span class="label">messages</span></div>
+  <div class="icon locked" onclick="openWin('diary')"><div class="glyph">d</div><span class="label">notes.lock</span></div>
+  <div class="icon" onclick="openWin('bin')"><div class="glyph">x</div><span class="label">Recycle Bin</span></div>
+</div>
+
+<!-- PHOTO FOLDER -->
+<div class="win" id="win-files">
+  <div class="titlebar">
+    <span>Images<span style ="color:grey;"> -Digi Cam synced</span></span>
+    <span class="x" onclick="closeWin('files')">x</span>
+  </div>
+
+  <div class="body">
+    <div class="photo-viewer">
+      <div class="photo-frame">
+        <img id="images-viewer-img"
+             src="image_folder/11.jpg"
+             alt="11:11">
+      </div>
+
+      <div class="photo-info">
+        <span id="images-viewer-name">IMG_6001</span>
+        <span id="images-viewer-count">1 / 6</span>
+      </div>
+
+      <div class="photo-controls">
+        <button class="viewer-btn"
+                onclick="changePhoto('images',-1)">
+          ←
+        </button>
+
+        <button class="viewer-btn"
+                onclick="changePhoto('images',1)">
+          →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- BROWSER -->
+<div class="win" id="win-browser">
+ <div class="titlebar"><span>WebFind — browser history</span><span class="x" onclick="closeWin('browser')">x</span></div>
+ <div class="browser-chrome"><span class="navdot"></span><span class="navdot"></span><span class="navdot"></span><div class="addr">webfind.local/history</div></div>
+ <div class="body">
+  <div class="hist-label">recent searches — this device</div>
+  <div class="hist-row"><span class="q">weather this week</span><span class="t">09:14 AM</span></div>
+  <div class="hist-row"><span class="q">easy medication reminder ideas</span><span class="t">10:06 AM</span></div>
+  <div class="hist-row"><span class="q">side effects of my medication</span><span class="t">10:12 AM</span></div>
+  <div class="hist-row"><span class="q">why do i keep losing time</span><span class="t">11:47 PM</span></div>
+  <div class="hist-row flag"><span class="q">sulfuric acid</span><span class="t">01:58 AM</span></div>
+  <div class="hist-row flag"><span class="q">sulfuric acid — unusual quantity</span><span class="t">02:01 AM</span></div>
+  <div class="hist-row"><span class="q">cheap flights out of state</span><span class="t">02:07 AM</span></div>
+  <div class="hist-row flag"><span class="q">sulfuric acid safety data sheet</span><span class="t">02:09 AM</span></div>
+  <div class="hist-row"><span class="q">is it normal to smell burning when no one else does</span><span class="t">02:31 AM</span></div>
+  <div class="hist-row"><span class="q">local news april 18</span><span class="t">03:40 AM</span></div>
+ </div>
+</div>
+
+<!-- MESSAGES -->
+<div class="win" id="win-chat">
+ <div class="titlebar"><span>messages.db</span><span class="x" onclick="closeWin('chat')">x</span></div>
+ <div class="body">
+
+  <div id="chat-list">
+   <div class="contact-row" onclick="openThread('friend')">
+    <div class="avatar">?</div>
+    <div class="contact-meta"><strong>Unknown </strong><span class="preview" id="preview-friend">Trust me, we make sure not a soul finds out.</span></div>
+    <span class="row-badge" id="thread-badge-friend">1</span>
+   </div>
+   <div class="contact-row" onclick="openThread('mom')">
+    <div class="avatar">M</div>
+    <div class="contact-meta"><strong>Mom</strong><span class="preview">please pick up the phone.</span></div>
+   </div>
+   <div class="contact-row" onclick="openThread('therapist')">
+    <div class="avatar">Dr</div>
+    <div class="contact-meta"><strong>Dr. Ahlgren</strong><span class="preview">You missed today's session.</span></div>
+   </div>
+  </div>
+
+  <div id="thread-friend" class="thread">
+   <div class="thread-header"><span class="back" onclick="closeThread()">‹ back</span><strong>Unknown</strong><small>no saved name</small></div>
+
+   <div class="chat-date">16 MAR 2024</div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Unknown </span>you know where to find it if you need it<span class="timestamp">8:41 PM</span></div></div>
+   <div class="msg-row me"><div class="bubble">i know. i won't forget.<span class="timestamp">8:42 PM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Unknown </span>and don't give the password to anyone else<span class="timestamp">8:43 PM</span></div></div>
+   <div class="msg-row me"><div class="bubble">i won't. promise.<span class="timestamp">8:44 PM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Unknown </span>you'll know it when you see it. it's always the same four numbers, right in front of you.<span class="timestamp">8:46 PM</span></div></div>
+   <div class="msg-row me"><div class="bubble">1111. always 1111. i see it everywhere.<span class="timestamp">8:47 PM</span></div></div>
+
+   <div class="chat-date">03 APR 2024</div>
+   <div class="msg-row me"><div class="bubble">i got you something. i couldn't afford anything else, so don't laugh.<span class="timestamp">6:14 PM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Unknown </span>a digital camera? mary, you didn't have to do that.<span class="timestamp">6:15 PM</span></div></div>
+   <div class="msg-row me"><div class="bubble">i wanted you to have something that's yours.<span class="timestamp">6:16 PM</span></div></div>
+
+   <div class="chat-date">17 APR 2024</div>
+   <div class="msg-row me"><div class="bubble">tomorrow. are you actually excited?<span class="timestamp">9:02 PM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Unknown </span>more than i should be.<span class="timestamp">9:03 PM</span></div></div>
+   <div class="msg-row me"><div class="bubble">same. i keep thinking about it.<span class="timestamp">9:04 PM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Unknown </span>tomorrow, same time. don't be late.<span class="timestamp">9:05 PM</span></div></div>
+
+   <div class="chat-date">30 MAR 2024</div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Unknown </span>Hey. Are you okay after what happened last night?<span class="timestamp">11:02 PM</span></div></div>
+   <div class="msg-row me"><div class="bubble">Yeah... it just took me aback.<span class="timestamp">11:03 PM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Unknown</span>I know, honey. Promise me that it'll be just between us okay?<span class="timestamp">11:05 PM</span></div></div>
+   <div class="msg-row me"><div class="bubble">So tomorrow... same time?<span class="timestamp">11:06 PM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Unknown</span>Yes love.<span class="timestamp">11:07 PM</span></div></div>
+   <div class="msg-row me"><div class="bubble">What if people find out?<span class="timestamp">11:08 PM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Unknown</span>Trust me, we make sure not a soul finds out.<span class="timestamp">11:09 PM</span></div></div>
+
+   <div id="final-thread" style="display:none">
+    <div class="chat-date">19 APR 2024</div>
+    <div class="msg-row"><div class="bubble"><span class="sender">Unknown</span>It's too late now.<span class="timestamp">12:03 AM</span></div></div>
+        
+   </div>
+  </div>
+
+  <div id="thread-mom" class="thread">
+   <div class="thread-header"><span class="back" onclick="closeThread()">‹ back</span><strong>Mom</strong></div>
+
+   <div class="chat-date">2 APR 2024</div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Mom</span>did you sleep okay last night?<span class="timestamp">8:02 AM</span></div></div>
+   <div class="msg-row me"><div class="bubble">not really. same as before.<span class="timestamp">8:10 AM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Mom</span>did you write it down like dr. ahlgren said?<span class="timestamp">8:11 AM</span></div></div>
+   <div class="msg-row me"><div class="bubble">yeah. it's in the notebook.<span class="timestamp">8:13 AM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Mom</span>good. call me after your session thursday okay?<span class="timestamp">8:14 AM</span></div></div>
+   <div class="msg-row me"><div class="bubble">i will<span class="timestamp">8:15 AM</span></div></div>
+
+   <div class="chat-date">19 APR 2024</div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Mom</span>mary?<span class="timestamp">9:20 AM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Mom</span>you didn't call after your session yesterday<span class="timestamp">1:45 PM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Mom</span>please pick up the phone.<span class="timestamp">7:58 PM</span></div></div>
+   <div class="seen-none">not delivered</div>
+  </div>
+
+  <div id="thread-therapist" class="thread">
+   <div class="thread-header"><span class="back" onclick="closeThread()">‹ back</span><strong>Dr. Ahlgren</strong></div>
+
+   <div class="chat-date">10 APR 2024</div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Dr. Ahlgren</span>Reminder: your session is Thursday at 4:00 PM.<span class="timestamp">9:00 AM</span></div></div>
+   <div class="msg-row me"><div class="bubble">I'll be there.<span class="timestamp">9:41 AM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Dr. Ahlgren</span>Please keep tracking the episodes between now and then, it helps us both.<span class="timestamp">9:43 AM</span></div></div>
+   <div class="msg-row me"><div class="bubble">I have been. Some days more than others.<span class="timestamp">9:47 AM</span></div></div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Dr. Ahlgren</span>That's okay. We'll go through it together Thursday.<span class="timestamp">9:48 AM</span></div></div>
+
+   <div class="chat-date">18 APR 2024</div>
+   <div class="msg-row"><div class="bubble"><span class="sender">Dr. Ahlgren</span>You missed today's session — please call the office when you can.<span class="timestamp">5:10 PM</span></div></div>
+   <div class="seen-none">not delivered</div>
+  </div>
+
+ </div>
+</div>
+
+<!-- DIARY -->
+<div class="win" id="win-diary">
+ <div class="titlebar"><span>notes.lock </span><span class="x" onclick="closeWin('diary')">x</span></div>
+ <div class="body">
+  <div id="diary-lock" class="diary-lock">
+   <div class="warning">PRIVATE FILE · ACCESS RESTRICTED</div>
+   
+   <input id="diary-password" type="password" placeholder="enter password">
+   <button class="btn" onclick="unlockDiary()">UNLOCK</button>
+   <div id="diary-status" class="hint">Hint: check messages dated 16 MAR 2024 — she says the number out loud.</div>
+  </div>
+  <div id="diary-content" style="display:none">
+   <div class="entry"><div class="date">MARCH 3</div><p>I told the doctor the episodes have been getting harder to separate from ordinary memories. I keep seeing a man in places where no one else sees anyone. I wrote it down because I am trying to keep track of what I remember.</p></div>
+   <div class="entry"><div class="date">MARCH 9</div><p>Another episode today. I was sure someone was standing in the kitchen, but when I checked, there was nobody there. I know these episodes can feel real even when they aren't.</p><p class="whisper">write it down. check it later.</p></div>
+   <div class="entry"><div class="date">MARCH 14</div><p>I remembered a hallway from childhood that my sister says never existed. I don't know whether it was a memory, a dream, or another episode.</p></div>
+   <div class="entry"><div class="date">APRIL 8 — EPISODE</div><p>I thought I saw a man in a long coat standing outside the apartment window, smiling at me. I stayed inside and wrote this down afterward because I don't trust the memory.</p></div>
+   <div class="entry"><div class="date">APRIL 17 — 11:58 PM</div><p>Tomorrow is the date we kept talking about. I feel like something is going to happen, but I can't tell whether that feeling belongs to me or to one of the episodes.</p></div>
+  </div>
+ </div>
+</div>
+
+<!-- RECYCLE BIN -->
+<div class="win" id="win-bin">
+  <div class="titlebar">
+    <span>Recycle Bin</span>
+    <span class="x" onclick="closeWin('bin')">x</span>
+  </div>
+
+  <div class="body">
+    <div class="photo-viewer">
+      <div class="photo-frame">
+        <img id="bin-viewer-img"
+             src="recycle_bin/creepy1.png"
+             alt="recoverthis">
+      </div>
+
+      <div class="photo-info">
+        <span id="bin-viewer-name">IMG_0408.jpg</span>
+        <span id="bin-viewer-count">1 / 5</span>
+      </div>
+
+      <div class="photo-controls">
+        <button class="viewer-btn"
+                onclick="changePhoto('bin',-1)">
+          ← 
+        </button>
+
+        <button class="viewer-btn"
+                onclick="changePhoto('bin',1)">
+          →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+let zTop = 20;
+function bringToFront(el){
+  zTop++;
+  el.style.zIndex = zTop;
+}
+function openWin(id){
+ const el=document.getElementById('win-'+id);
+ if(!el) return;
+ el.classList.add('open');
+ bringToFront(el);
+ if(id==='chat') showChatList();
+ if(id!=='diary' && id!=='chat') markVisited(id);
+}
+function closeWin(id){document.getElementById('win-'+id).classList.remove('open')}
+
+function showChatList(){
+  document.querySelectorAll('.thread').forEach(t=>t.style.display='none');
+  const list=document.getElementById('chat-list');
+  if(list) list.style.display='flex';
+}
+function openThread(id){
+  const list=document.getElementById('chat-list');
+  if(list) list.style.display='none';
+  document.querySelectorAll('.thread').forEach(t=>t.style.display='none');
+  const thread=document.getElementById('thread-'+id);
+  if(thread) thread.style.display='block';
+  if(id==='friend'){
+    const wasAlreadyRevealed = finalRevealed;
+    markVisited('chat');
+    if(wasAlreadyRevealed) clearUnread();
+  }
+}
+function closeThread(){
+  document.querySelectorAll('.thread').forEach(t=>t.style.display='none');
+  showChatList();
+}
+
+/* FINAL MESSAGE — once every window has actually been reviewed
+   (diary included, unlocked, and her real conversation read), one
+   last unanswered thread appears from the Unknown Man */
+const visited = new Set();
+let finalRevealed = false;
+function markVisited(id){
+  visited.add(id);
+  const need=['files','browser','chat','diary','bin'];
+  if(!finalRevealed && need.every(n=>visited.has(n))){
+    finalRevealed = true;
+    revealFinalMessage();
+  }
+}
+function revealFinalMessage(){
+  const thread=document.getElementById('final-thread');
+  if(thread) thread.style.display='block';
+  const chatIcon=document.getElementById('icon-chat');
+  const badge=document.getElementById('chat-badge');
+  const rowBadge=document.getElementById('thread-badge-friend');
+  const preview=document.getElementById('preview-friend');
+  if(chatIcon) chatIcon.classList.add('has-unread');
+  if(badge) badge.style.display='flex';
+  if(rowBadge) rowBadge.style.display='flex';
+  if(preview) preview.textContent='It\'s too late now.';
+  document.body.classList.add('glitch-active');
+  setTimeout(()=>document.body.classList.remove('glitch-active'),180);
+}
+function clearUnread(){
+  const chatIcon=document.getElementById('icon-chat');
+  const badge=document.getElementById('chat-badge');
+  const rowBadge=document.getElementById('thread-badge-friend');
+  if(chatIcon) chatIcon.classList.remove('has-unread');
+  if(badge) badge.style.display='none';
+  if(rowBadge) rowBadge.style.display='none';
+}
+
+/* DRAGGABLE WINDOWS */
+document.querySelectorAll('.win').forEach(win=>{
+  const bar=win.querySelector('.titlebar');
+  if(!bar) return;
+  win.addEventListener('mousedown',()=>bringToFront(win));
+  let dragging=false, offX=0, offY=0;
+  bar.addEventListener('mousedown', e=>{
+    if(e.target.classList.contains('x')) return;
+    dragging=true;
+    bringToFront(win);
+    const rect=win.getBoundingClientRect();
+    offX=e.clientX-rect.left;
+    offY=e.clientY-rect.top;
+    win.style.left=rect.left+'px';
+    win.style.top=rect.top+'px';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', e=>{
+    if(!dragging) return;
+    win.style.left=(e.clientX-offX)+'px';
+    win.style.top=(e.clientY-offY)+'px';
+  });
+  document.addEventListener('mouseup',()=>dragging=false);
+});
+function updateClock(){
+  const d=new Date();
+  let h=d.getHours()%12;
+  if(h===0) h=12;
+
+  const m=String(d.getMinutes()).padStart(2,'0');
+
+  document.getElementById('clock').textContent =
+    h+':'+m+' '+(d.getHours()>=12?'PM':'AM');
+}
+
+const clock = document.getElementById('clock');
+
+if (clock) {
+  updateClock();
+  setInterval(updateClock,15000);
+}
+const photoSets = {
+  images: [
+    {src:'image_folder/11.jpg', name:'IMG_6001'},
+    {src:'image_folder/uno.jpg', name:'IMG_6013'},
+    {src:'image_folder/mary2.png', name:'IMG_6014'},
+    {src:'image_folder/sundate.jpg', name:'IMG_6020'},
+    {src:'image_folder/mary1.jpg', name:'IMG_6015'},
+    {src:'image_folder/onlinefrnd.png', name:'IMG_6021'}
+  ],
+
+  bin: [
+    {src:'recycle_bin/creepy1.png', name:'IMG_0408.jpg'},
+    {src:'recycle_bin/creepy2.png', name:'IMG_0411'},
+    {src:'recycle_bin/creepy3.png', name:'IMG_0501'},
+    {src:'recycle_bin/mary.png', name:'IMG_0503'},
+    {src:'recycle_bin/window.png', name:'IMG_0510'}
+  ]
+};
+
+const photoIndexes = {
+  images: 0,
+  bin: 0
+};
+
+
+function showPhoto(set){
+
+  const photos = photoSets[set];
+  const index = photoIndexes[set];
+
+  const prefix = set === 'images'
+    ? 'images'
+    : 'bin';
+
+  const img = document.getElementById(
+    prefix + '-viewer-img'
+  );
+
+  const name = document.getElementById(
+    prefix + '-viewer-name'
+  );
+
+  const count = document.getElementById(
+    prefix + '-viewer-count'
+  );
+
+  const frame = img.closest('.photo-frame');
+
+  frame.classList.remove('changing');
+
+  void img.offsetWidth;
+
+  frame.classList.add('changing');
+
+  img.src = photos[index].src;
+  img.alt = photos[index].name;
+
+  name.textContent = photos[index].name;
+
+  count.textContent =
+    (index + 1) + ' / ' + photos.length;
+}
+
+
+function changePhoto(set, direction){
+
+  const photos = photoSets[set];
+
+  photoIndexes[set] =
+    (photoIndexes[set] + direction + photos.length)
+    % photos.length;
+
+  showPhoto(set);
+}
+
+
+
+
+/* KEYBOARD CONTROLS */
+
+document.addEventListener('keydown', e => {
+
+  const filesOpen =
+    document.getElementById('win-files')
+      ?.classList.contains('open');
+
+  const binOpen =
+    document.getElementById('win-bin')
+      ?.classList.contains('open');
+
+
+  if(filesOpen){
+
+    if(e.key === 'ArrowRight')
+      changePhoto('images',1);
+
+    if(e.key === 'ArrowLeft')
+      changePhoto('images',-1);
+
+  }
+
+
+  if(binOpen){
+
+    if(e.key === 'ArrowRight')
+      changePhoto('bin',1);
+
+    if(e.key === 'ArrowLeft')
+      changePhoto('bin',-1);
+
+  }
+
+});
+
+
+/* CLICK PHOTO TO ADVANCE */
+
+document
+  .getElementById('images-viewer-img')
+  ?.addEventListener('click', () => {
+
+    changePhoto('images',1);
+
+  });
+
+
+document
+  .getElementById('bin-viewer-img')
+  ?.addEventListener('click', () => {
+
+    changePhoto('bin',1);
+
+  });
+
+
+/* INITIALIZE */
+
+showPhoto('images');
+showPhoto('bin');
+function unlockDiary(){
+ const input=document.getElementById('diary-password');
+ const status=document.getElementById('diary-status');
+ const DIARY_PASSWORD='1111';
+ const attempt=input.value.trim().toLowerCase();
+ if(attempt===DIARY_PASSWORD){
+   document.getElementById('diary-lock').style.display='none';
+   document.getElementById('diary-content').style.display='block';
+   markVisited('diary');
+ }else{
+   status.textContent='ACCESS DENIED — recover the exact password from the 16 MAR conversation.';
+   status.style.color='#a95a5a';
+ }
+}
+document.getElementById('diary-password').addEventListener('keydown',e=>{
+ if(e.key==='Enter')unlockDiary();
+});
+
+window.addEventListener('load',()=>{
+ setTimeout(()=>{document.getElementById('boot-line2').textContent='RECOVERY COMPLETE. CLICK AN ICON.'},900);
+ setTimeout(()=>{document.getElementById('boot').classList.add('hide')},2300);
+});
+
+</script>
+
+</body>
+</html>
